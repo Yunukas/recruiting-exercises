@@ -1,19 +1,26 @@
 package com.deliverr;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class InventoryAllocator {
 
+    private Map<String, Integer> order = new HashMap<>();
+    private List<Warehouse> warehouseList = new ArrayList<>();
     // result of the order whether it can be fulfilled or not
     private boolean orderFulfilled = true;
 
-    // this public method will orchestrate the order process
-    public OrderResult processOrder(Map<String, Integer> order, List<Warehouse> warehouseList) {
+    // pre-validation before proceeding with the order
+    private boolean validateOrderAmounts(Map<String, Integer> order){
         // if there are negative amounts, return empty result, ex: apple:-1,orange:5
+        boolean negativeAmount = false;
         for (int amount : order.values()) {
-            if (amount < 0)
-                return new OrderResult();
+            if (amount < 0){
+                negativeAmount = true;
+                break;
+            }
         }
         // check if there is at least one item with
         // amount > 0 (preventing against a fake order of all 0s)
@@ -25,34 +32,51 @@ public class InventoryAllocator {
             }
         }
         // if all item amounts are Zero, return empty result
-        if (!nonZero)
+        if (!nonZero || negativeAmount){
+            return false;
+        }
+        return true;
+    }
+
+    // this public method will orchestrate the order process
+    public OrderResult processOrder(Map<String, Integer> order, List<Warehouse> warehouseList) {
+        // check if there are negative numbers or
+        // all numbers are zero
+        if(!validateOrderAmounts(order)){
+            System.out.println("Not a legit order!\n");
             return new OrderResult();
+        }
+        // assign members
+        this.order = order;
+        this.warehouseList = warehouseList;
 
         // check if the order can be fulfilled by a single warehouse
         // which is expected to be the cheapest option
         // a positive number points to the index of the warehouse
-        int designatedWarehouse = canBeFulfilledBySingleWarehouse(order, warehouseList);
+        int designatedWarehouse = canBeFulfilledBySingleWarehouse();
 
         if (designatedWarehouse >= 0) {
-            System.out.println("All of the order will be shipped from: "
-                    + warehouseList.get(designatedWarehouse).getName());
-            shipFromSingleWarehouse(order, warehouseList.get(designatedWarehouse));
-        } else {
-            shipFromMultipleWarehouses(order, warehouseList);
+            System.out.println(
+            "All of the order will be shipped from: "
+            + warehouseList.get(designatedWarehouse).getName());
+            // call single location shipping
+            shipFromSingleWarehouse(warehouseList.get(designatedWarehouse));
         }
-        return collectResult(warehouseList, orderFulfilled);
+        else
+            shipFromMultipleWarehouses();
+
+        return collectResult(orderFulfilled);
     }
 
     // this method handles the shipping from the designated warehouse
-    private void shipFromSingleWarehouse(Map<String, Integer> order, Warehouse warehouse) {
+    private void shipFromSingleWarehouse(Warehouse warehouse) {
         for (Map.Entry<String, Integer> orderPiece : order.entrySet()) {
             warehouse.shipItem(orderPiece.getKey(), orderPiece.getValue());
         }
     }
 
-    // if the order has to be split between different warehouses, this method will be called
-    private void shipFromMultipleWarehouses(Map<String, Integer> order, List<Warehouse> warehouseList) {
-
+    // When order has to be split between different warehouses
+    private void shipFromMultipleWarehouses() {
         for (Map.Entry<String, Integer> orderPiece : order.entrySet()) {
             String item = orderPiece.getKey();      // current item, ex: orange
             int amount = orderPiece.getValue();     // ordered amount, ex: 5
@@ -63,7 +87,7 @@ public class InventoryAllocator {
                 amount -= shippableAmount;             // deduct the fulfilled amount
             }
             // this condition is met when the total amount of
-            // an ordered item is more than inventory
+            // an ordered item is more than the inventory amount
             if (amount > 0) {
                 orderFulfilled = false;
                 break;
@@ -75,7 +99,7 @@ public class InventoryAllocator {
 
     // this method will check if there is a warehouse
     // that can single-handedly ship the order
-    private int canBeFulfilledBySingleWarehouse(Map<String, Integer> order, List<Warehouse> warehouseList) {
+    private int canBeFulfilledBySingleWarehouse() {
         // if order can be filled by a single name, return its index
         for (int i = 0; i < warehouseList.size(); i++) {
             if (warehouseList.get(i).canFulfillTotalOrder(order))
@@ -86,18 +110,22 @@ public class InventoryAllocator {
     }
 
     // collect the result of shipping -> warehouse name, shipped items and their amounts
-    private OrderResult collectResult(List<Warehouse> inventory, boolean orderFulfilled) {
+    private OrderResult collectResult(boolean orderFulfilled) {
         OrderResult orderResult = new OrderResult();
         // if order was fulfilled,
         // get shipping info from each inventory
         if (orderFulfilled) {
-            for (Warehouse warehouse : inventory) {
+            for (Warehouse warehouse : warehouseList) {
                 if (warehouse.getShippingInfo() != null)
                     orderResult.add(warehouse.getShippingInfo());
             }
         }
-
         // print result on screen
+        printResult(orderResult);
+        return orderResult;
+    }
+    // this method will print the order result on screen
+    private void printResult(OrderResult orderResult){
         System.out.print("[");
         for (Map<String, Map<String, Integer>> map : orderResult.getResult()) {
 
@@ -110,8 +138,6 @@ public class InventoryAllocator {
             }
         }
         System.out.print("]\n\n");
-
-        return orderResult;
     }
 }
 
