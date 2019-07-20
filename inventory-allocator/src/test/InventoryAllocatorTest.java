@@ -19,7 +19,7 @@ class InventoryAllocatorTest {
     // Order object
     private Map<String, Integer> orders = new HashMap<>();
 
-    // List of com.deliverr.Warehouse objects
+    // List of Warehouse objects
     private List<Warehouse> warehouses = new ArrayList<>();
 
     // actual result object
@@ -153,7 +153,7 @@ class InventoryAllocatorTest {
         System.out.println(" }");
     }
 
-    // Generate a com.deliverr.Warehouse object and add to the list of com.deliverr.Warehouse objects
+    // Generate a Warehouse object and add to the list of Warehouse objects
     private void warehouseGenerator(String name, String inventory) {
         System.out.print("Inventory: [{" + name + ": {");
         Warehouse wh = new Warehouse(name);
