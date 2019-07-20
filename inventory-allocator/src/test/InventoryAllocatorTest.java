@@ -142,23 +142,29 @@ class InventoryAllocatorTest {
 
     // Generate an order object and add to the orders map
     private void orderGenerator(String order) {
+        System.out.print("Order: {");
         // order format "apple:5,orange:10"
         String[] splitItems = order.split(",");
         for (String item : splitItems) {
             String[] itemToAmount = item.split(":");
             orders.put(itemToAmount[0], Integer.parseInt(itemToAmount[1]));
+            System.out.printf(" %s: %s,",itemToAmount[0], Integer.parseInt(itemToAmount[1]) );
         }
+        System.out.println(" }");
     }
 
     // Generate a com.deliverr.Warehouse object and add to the list of com.deliverr.Warehouse objects
     private void warehouseGenerator(String name, String inventory) {
+        System.out.print("Inventory: [{" + name + ": {");
         Warehouse wh = new Warehouse(name);
         // inventory format "apple:5,orange:10"
         String[] splitItems = inventory.split(",");
         for (String item : splitItems) {
             String[] itemToAmount = item.split(":");
             wh.addItem(itemToAmount[0], Integer.parseInt(itemToAmount[1]));
+            System.out.printf(" %s: %s,",itemToAmount[0], Integer.parseInt(itemToAmount[1]) );
         }
+        System.out.println(" }]");
         warehouses.add(wh);
     }
 
