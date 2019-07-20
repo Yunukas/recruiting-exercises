@@ -1,4 +1,4 @@
-package com.deliverr;
+package test;
 
 import com.deliverr.InventoryAllocator;
 import com.deliverr.OrderResult;
