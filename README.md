@@ -1,3 +1,3 @@
 
 
-### recruitment-exercises
+### recruiting-exercises
