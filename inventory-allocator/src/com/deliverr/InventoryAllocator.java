@@ -31,7 +31,7 @@ public class InventoryAllocator {
                 break;
             }
         }
-        // if all item amounts are Zero, return empty result
+        // if validation failed, return false
         if (!nonZero || negativeAmount){
             return false;
         }
@@ -54,7 +54,6 @@ public class InventoryAllocator {
         // which is expected to be the cheapest option
         // a positive number points to the index of the warehouse
         int designatedWarehouse = canBeFulfilledBySingleWarehouse();
-
         if (designatedWarehouse >= 0) {
             System.out.println(
             "All of the order will be shipped from: "

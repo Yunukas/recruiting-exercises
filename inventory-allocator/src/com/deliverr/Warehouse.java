@@ -10,7 +10,6 @@ public class Warehouse {
     private Map<String, Integer> itemToAmount;
     // the items that are shipped from this inventory and their amounts
     private Map<String, Integer> itemsToShip;
-
     // this will confirm if there are items are being shipped from this warehouse
     private boolean isShipping;
 
@@ -61,20 +60,21 @@ public class Warehouse {
         return null;
     }
 
-    //
+    // check inventory and get the amount
+    // of items that can be shipped
     public int shipItem(String item, int amount) {
         if (itemToAmount.containsKey(item)) {
             if (itemToAmount.get(item) > 0) {
                 // whichever amount is less will be the deciding factor
                 int toBeShipped = Math.min(amount, itemToAmount.get(item));
-                // increment the amount of total shipped items
+                // mark this inventory as shipping
                 isShipping = true;
                 // add the shipped item and its amount to the list
                 itemsToShip.put(item, toBeShipped);
                 return toBeShipped;
             }
         }
-        // if we couldnt find the item or the amount is zero
+        // if item couldnt be found or the amount is zero
         return 0;
     }
 }
