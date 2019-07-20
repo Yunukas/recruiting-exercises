@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Warehouse {
-    // name of Warehouse
+    // name of warehouse
     private String name;
     // amount of each item, ex: {apple: 5, orange: 10}
     private Map<String, Integer> itemToAmount;
@@ -67,8 +67,6 @@ public class Warehouse {
             if (itemToAmount.get(item) > 0) {
                 // whichever amount is less will be the deciding factor
                 int toBeShipped = Math.min(amount, itemToAmount.get(item));
-                // decrement the inventory items
-                itemToAmount.put(item, itemToAmount.get(item) - toBeShipped);
                 // increment the amount of total shipped items
                 isShipping = true;
                 // add the shipped item and its amount to the list

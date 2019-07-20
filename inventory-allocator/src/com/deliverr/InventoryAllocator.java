@@ -1,7 +1,5 @@
 package com.deliverr;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,12 +15,14 @@ public class InventoryAllocator {
             if (amount < 0)
                 return new OrderResult();
         }
-
-        // check if there are non-zero amounts
+        // check if there is at least one item with
+        // amount > 0 (preventing against a fake order of all 0s)
         boolean nonZero = false;
         for (int amount : order.values()) {
-            if (amount > 0)
+            if (amount > 0){
                 nonZero = true;
+                break;
+            }
         }
         // if all item amounts are Zero, return empty result
         if (!nonZero)
@@ -36,22 +36,22 @@ public class InventoryAllocator {
         if (designatedWarehouse >= 0) {
             System.out.println("All of the order will be shipped from: "
                     + warehouseList.get(designatedWarehouse).getName());
-            shipFromSingleWareHouse(order, warehouseList.get(designatedWarehouse));
+            shipFromSingleWarehouse(order, warehouseList.get(designatedWarehouse));
         } else {
-            shipFromMultipleWareHouses(order, warehouseList);
+            shipFromMultipleWarehouses(order, warehouseList);
         }
         return collectResult(warehouseList, orderFulfilled);
     }
 
     // this method handles the shipping from the designated warehouse
-    private void shipFromSingleWareHouse(Map<String, Integer> order, Warehouse warehouse) {
+    private void shipFromSingleWarehouse(Map<String, Integer> order, Warehouse warehouse) {
         for (Map.Entry<String, Integer> orderPiece : order.entrySet()) {
             warehouse.shipItem(orderPiece.getKey(), orderPiece.getValue());
         }
     }
 
     // if the order has to be split between different warehouses, this method will be called
-    private void shipFromMultipleWareHouses(Map<String, Integer> order, List<Warehouse> warehouseList) {
+    private void shipFromMultipleWarehouses(Map<String, Integer> order, List<Warehouse> warehouseList) {
 
         for (Map.Entry<String, Integer> orderPiece : order.entrySet()) {
             String item = orderPiece.getKey();      // current item, ex: orange
@@ -73,8 +73,8 @@ public class InventoryAllocator {
             System.out.println("Order will be split between warehouses");
     }
 
-    // this method will check each warehouse if there is a single warehouse
-    // that can ship all items at once
+    // this method will check if there is a warehouse
+    // that can single-handedly ship the order
     private int canBeFulfilledBySingleWarehouse(Map<String, Integer> order, List<Warehouse> warehouseList) {
         // if order can be filled by a single name, return its index
         for (int i = 0; i < warehouseList.size(); i++) {
@@ -87,7 +87,6 @@ public class InventoryAllocator {
 
     // collect the result of shipping -> warehouse name, shipped items and their amounts
     private OrderResult collectResult(List<Warehouse> inventory, boolean orderFulfilled) {
-
         OrderResult orderResult = new OrderResult();
         // if order was fulfilled,
         // get shipping info from each inventory
@@ -98,16 +97,16 @@ public class InventoryAllocator {
             }
         }
 
-        // print results on screen
+        // print result on screen
         System.out.print("[");
         for (Map<String, Map<String, Integer>> map : orderResult.getResult()) {
 
             for (Map.Entry<String, Map<String, Integer>> entry : map.entrySet()) {
-                System.out.print("{" + entry.getKey() + ": ");
+                System.out.print("{" + entry.getKey() + ": {");
                 for (Map.Entry<String, Integer> items : entry.getValue().entrySet()) {
-                    System.out.print("{ " + items.getKey() + ": " + items.getValue() + " } ");
+                    System.out.print(" " + items.getKey() + ": " + items.getValue() + ", ");
                 }
-                System.out.print("}");
+                System.out.print(" },");
             }
         }
         System.out.print("]\n\n");
