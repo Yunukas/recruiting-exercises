@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 public class InventoryAllocator {
-
+    // Order items and their amounts
     private Map<String, Integer> order = new HashMap<>();
+    // list of warehouses and their inventory
     private List<Warehouse> warehouseList = new ArrayList<>();
     // result of the order whether it can be fulfilled or not
     private boolean orderFulfilled = true;
