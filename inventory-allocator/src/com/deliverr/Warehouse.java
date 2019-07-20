@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Warehouse {
-    // name of name
+    // name of Warehouse
     private String name;
     // amount of each item, ex: {apple: 5, orange: 10}
     private Map<String, Integer> itemToAmount;
@@ -14,7 +14,7 @@ public class Warehouse {
     // this will confirm if there are items are being shipped from this warehouse
     private boolean isShipping;
 
-    // construct the name with name and initialize the members
+    // construct the warehouse with name and initialize the members
     public Warehouse(String name) {
         this.name = name;
         itemToAmount = new HashMap<>();
@@ -27,8 +27,8 @@ public class Warehouse {
         itemToAmount.put(item, amount);
     }
 
-    // return the name name
-    String getName() {
+    // return the warehouse name
+    public String getName() {
         return name;
     }
 
@@ -41,7 +41,7 @@ public class Warehouse {
     }
 
     // check if one warehouse can fulfill the total order
-    boolean canFulfillTotalOrder(Map<String, Integer> order) {
+    public boolean canFulfillTotalOrder(Map<String, Integer> order) {
         // loop through each item and if order amount
         // is greater than inventory, return false
         for (Map.Entry<String, Integer> orderPiece : order.entrySet()) {
@@ -52,7 +52,7 @@ public class Warehouse {
     }
 
     // this method will return the shipped items and their amounts
-    Map<String, Map<String, Integer>> getShippingInfo() {
+    public Map<String, Map<String, Integer>> getShippingInfo() {
         Map<String, Map<String, Integer>> shippingInfo = new HashMap<>();
         if (isShipping) {
             shippingInfo.put(name, itemsToShip);
@@ -62,7 +62,7 @@ public class Warehouse {
     }
 
     //
-    int shipItem(String item, int amount) {
+    public int shipItem(String item, int amount) {
         if (itemToAmount.containsKey(item)) {
             if (itemToAmount.get(item) > 0) {
                 // whichever amount is less will be the deciding factor
