@@ -80,9 +80,9 @@ public class InventoryAllocator {
         for (Map.Entry<String, Integer> orderPiece : order.entrySet()) {
             String item = orderPiece.getKey();      // current item, ex: orange
             int amount = orderPiece.getValue();     // ordered amount, ex: 5
-            int currentInventory = 0;               // index of current name
+            int currentInventory = 0;               // index of current warehouse
             while (amount > 0 && currentInventory < warehouseList.size()) {
-                // process current name, get shipped amount and increment to the next
+                // process current warehouse, get shipped amount and increment to the next
                 int shippableAmount = warehouseList.get(currentInventory++).shipItem(item, amount);
                 amount -= shippableAmount;             // deduct the fulfilled amount
             }
@@ -100,7 +100,7 @@ public class InventoryAllocator {
     // this method will check if there is a warehouse
     // that can single-handedly ship the order
     private int canBeFulfilledBySingleWarehouse() {
-        // if order can be filled by a single name, return its index
+        // if order can be filled by a single warehouse, return its index
         for (int i = 0; i < warehouseList.size(); i++) {
             if (warehouseList.get(i).canFulfillTotalOrder(order))
                 return i;
