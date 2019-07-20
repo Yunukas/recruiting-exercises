@@ -1,7 +1,7 @@
 EASY!
 Tests are created using JUnit5.3
-You can right click on InventoryAllocatorTest.java file
-and choose run!
-I also included console messages for better visualization.
-(Please don't mind the extra commas at the end)
+On your Java IDE, (I am using IntelliJ)
+you can right click on InventoryAllocatorTest.java
+file and choose run! I also included console messages for
+better visualization. (Please don't mind the extra commas at the end)
 Enjoy rolling with this app ;)
